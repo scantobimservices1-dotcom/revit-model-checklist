@@ -1,1 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revit Model QA Checklist | Tesla Outsourcing Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #353535;
+    --navy-dark: #353535;
+    --gold: #de424a;
+    --paper: #FAF9F6;
+    --ink: #353535;
+    --grey: #9398a0;
+    --line: #D8D4C8;
+    --done-bg: #F1F6EF;
+    --done-line: #4C7A4C;
+  }
 
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    max-width: 780px;
+    margin: 40px auto;
+    background: #fff;
+    border: 1.5px solid var(--navy);
+    box-shadow: 0 2px 0 var(--navy), 0 12px 40px rgba(31,56,100,0.12);
+    position: relative;
+  }
+
+  /* --- Title block, drafting-sheet style --- */
+  .titleblock {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    border-bottom: 1.5px solid var(--navy);
+  }
+  .titleblock-main {
+    padding: 28px 32px 24px;
+  }
+  .eyebrow {
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    color: var(--navy);
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+  h1 {
+    font-size: 34px;
+    line-height: 1.1;
+    margin: 0 0 6px;
+    color: var(--navy-dark);
+    font-weight: 700;
+  }
+  .subtitle {
+    font-size: 16px;
+    color: var(--grey);
+    font-style: italic;
+    margin: 0;
+    max-width: 46ch;
+  }
+  .titleblock-meta {
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+    font-size: 11px;
+    color: var(--navy);
+    border-left: 1px solid var(--line);
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    min-width: 150px;
+  }
+  .titleblock-meta div {
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .titleblock-meta div:last-child { border-bottom: none; }
+  .titleblock-meta span.label {
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+  .titleblock-meta span.val {
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* --- Progress ruler --- */
+  .progress-wrap {
+    padding: 18px 32px;
+    background: var(--navy-dark);
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    color: #fff;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .progress-label #count { color: var(--gold); font-weight: 700; }
+  .ruler {
+    position: relative;
+    height: 14px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .ruler::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.25) 0,
+      rgba(255,255,255,0.25) 1px,
+      transparent 1px,
+      transparent 20px
+    );
+    z-index: 2;
+  }
+  .ruler-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold), #e0bf4f);
+    transition: width 0.35s ease;
+    z-index: 1;
+  }
+
+  /* --- Intro --- */
+  .intro {
+    padding: 22px 32px 4px;
+    font-size: 14.5px;
+    color: var(--grey);
+    line-height: 1.6;
+  }
+
+  /* --- Sections --- */
+  .section { padding: 0 32px; }
+  .section-head {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.4px;
+    padding: 10px 16px;
+    margin: 28px 0 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .section-head .num {
+    font-size: 12px;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px dashed var(--line);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .item:hover { background: #FAFAF7; }
+  .item.done { background: var(--done-bg); }
+  .item.done .item-text { color: var(--done-line); text-decoration: line-through; text-decoration-color: rgba(76,122,76,0.5); }
+
+  .box {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--navy);
+    border-radius: 3px;
+    margin-top: 2px;
+    position: relative;
+  }
+  .item.done .box { background: var(--done-line); border-color: var(--done-line); }
+  .item.done .box::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0px;
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .item-text {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+
+  .note {
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--grey);
+    padding: 6px 16px 14px 46px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  /* --- CTA footer --- */
+  .cta {
+    margin: 36px 32px 0;
+    padding: 22px 24px;
+    background: var(--navy);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 6px;
+    background: var(--gold);
+  }
+  .cta h3 {
+    color: #fff;
+    margin: 0 0 8px;
+    font-size: 19px;
+  }
+  .cta p {
+    color: #D9E0EC;
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 0 0 14px;
+    max-width: 60ch;
+  }
+  .cta a.btn {
+    display: inline-block;
+    background: var(--gold);
+    color: #fff;
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    padding: 10px 20px;
+    border-radius: 3px;
+    text-decoration: none;
+  }
+
+  .footer-strip {
+    margin-top: 28px;
+    padding: 16px 32px 28px;
+    font-family: 'Be Vietnam Pro', Helvetica, Roboto, sans-serif;
+    font-size: 11px;
+    color: var(--grey);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--grey);
+    font-family: inherit;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .reset-btn:hover { border-color: var(--navy); color: var(--navy); }
+
+  @media (max-width: 600px) {
+    .sheet { margin: 0; border-left: none; border-right: none; }
+    .titleblock { grid-template-columns: 1fr; }
+    .titleblock-meta { flex-direction: row; display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: none; border-left: none; border-top: 1px solid var(--line); }
+    .titleblock-meta div { border-bottom: none; border-right: 1px solid var(--line); }
+    h1 { font-size: 27px; }
+  }
+
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="titleblock-main">
+      <img src="logo.png" alt="Tesla Outsourcing Services" style="max-height: 65px; margin-bottom: 24px; display: block;">
+      <p class="eyebrow">TESLA OUTSOURCING SERVICES — BIM RESOURCE</p>
+      <h1>Revit Model QA Checklist</h1>
+      <p class="subtitle">A structured quality pass to catch modeling errors and coordination risks before a model goes out for issue.</p>
+    </div>
+    <div class="titleblock-meta">
+      <div><span class="label">Doc No.</span><span class="val">QA&nbsp;— 002</span></div>
+      <div><span class="label">Rev</span><span class="val">A</span></div>
+      <div><span class="label">Items</span><span class="val">29</span></div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>PROGRESS</span><span><span id="count">0</span> / 29 checked</span></div>
+    <div class="ruler"><div class="ruler-fill" id="fill"></div></div>
+  </div>
+
+  <p class="intro">Click any item to check it off as you go. Nothing is saved or sent anywhere — this runs entirely in your browser, so it's safe to use on live project reviews.</p>
+
+  <div class="section" id="checklist">
+
+    <div class="section-head"><span class="num">1</span> Model Setup &amp; Standards Compliance</div>
+    <div class="item"><div class="box"></div><div class="item-text">Project browser organized per BIM Execution Plan (BEP) / office standard</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Shared coordinates set and matched to survey/site data</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Correct Revit template and title block version used</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Worksets set up correctly with no orphaned worksets</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Units, project location, and phasing set correctly</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">File naming convention matches project/client standard</div></div>
+
+    <div class="section-head"><span class="num">2</span> Model Health &amp; File Integrity</div>
+    <div class="item"><div class="box"></div><div class="item-text">Central file audited — critical warnings resolved (not just minor join notices)</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Unused/unplaced families and unused view templates purged</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">In-place families minimized or replaced with loadable families</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">No detached or corrupted linked models</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Compact/Save As performed before major milestone issue</div></div>
+    <div class="note">Tip: run Audit + Purge Unused before every coordination milestone, not just at the end.</div>
+
+    <div class="section-head"><span class="num">3</span> Worksharing &amp; Collaboration Hygiene</div>
+    <div class="item"><div class="box"></div><div class="item-text">"Relinquish All Mine" performed before sync — no elements left owned</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">No stuck editing requests or borrowed elements outstanding</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Linked models set correctly as Overlay vs. Attachment as required</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Links pinned in position; no unloaded or missing links at issue time</div></div>
+
+    <div class="section-head"><span class="num">4</span> Element &amp; Family Quality</div>
+    <div class="item"><div class="box"></div><div class="item-text">No duplicate, overlapping, or stacked elements</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Elements modeled at correct LOD for current project stage</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Parametric families behave correctly when flexed — no geometry breaks</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Shared parameters used consistently across families</div></div>
+
+    <div class="section-head"><span class="num">5</span> Views, Sheets &amp; Annotation</div>
+    <div class="item"><div class="box"></div><div class="item-text">View templates applied consistently — no stray view-specific overrides</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">All sheets have correct title block, revision, and sheet number</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Dimension strings and tags reference correct elements — no orphaned tags</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Print/export settings checked — line weights and plot style correct before issue</div></div>
+
+    <div class="section-head"><span class="num">6</span> Coordination &amp; Final Sign-off</div>
+    <div class="item"><div class="box"></div><div class="item-text">True North vs. Project North confirmed correct for this model's purpose</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Grids and levels match across all linked/federated models</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Model ready for clash detection handoff</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">QA reviewer sign-off recorded with date and model version</div></div>
+    <div class="item"><div class="box"></div><div class="item-text">Naming and QA process aligned with ISO 19650 or client BEP requirements</div></div>
+
+  </div>
+
+  <div class="cta">
+    <h3>Want QA built into every model we deliver?</h3>
+    <p>Tesla Outsourcing Services runs structured QA on every Revit deliverable — Architectural, Structural, and MEP — before it ever reaches your desk, with 50–60% cost savings over in-house teams.</p>
+    <a class="btn" href="https://www.teslaoutsourcingservices.com/contact-us.php">Get a Free Quote →</a>
+  </div>
+
+  <div class="footer-strip">
+    <span>© Tesla Outsourcing Services — Free BIM Resource</span>
+    <button class="reset-btn" id="resetBtn">Reset checklist</button>
+  </div>
+
+</div>
+
+<script>
+  const items = document.querySelectorAll('.item');
+  const countEl = document.getElementById('count');
+  const fillEl = document.getElementById('fill');
+  const total = items.length;
+
+  function updateProgress() {
+    const done = document.querySelectorAll('.item.done').length;
+    countEl.textContent = done;
+    fillEl.style.width = (done / total * 100) + '%';
+  }
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('done');
+      updateProgress();
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    items.forEach(item => item.classList.remove('done'));
+    updateProgress();
+  });
+</script>
+
+</body>
+</html>
